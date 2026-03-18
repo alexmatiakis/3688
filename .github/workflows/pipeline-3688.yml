@@ -30,3 +30,9 @@ jobs:
             with:
                 name: test-reports
                 path: '**/target/surefire-reports/*.xml'
+          - name: Upload integration test reports
+            if: always() 
+            uses: actions/upload-artifact@v4
+            with:
+                name: integration-test-reports
+                path: '**/target/failsafe-reports/*.xml'

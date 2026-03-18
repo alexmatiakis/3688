@@ -30,6 +30,12 @@ jobs:
             with:
                 name: test-reports
                 path: '**/target/surefire-reports/*.xml'
+                
+                
+          - name: integration Test 
+            id: integration-tests
+            run: nvm failsafe:integration-test
+            
           - name: Upload integration test reports
             if: always() 
             uses: actions/upload-artifact@v4

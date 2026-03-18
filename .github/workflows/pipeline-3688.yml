@@ -34,7 +34,7 @@ jobs:
                 
           - name: integration Test 
             id: integration-tests
-            run: nvm failsafe:integration-test
+            run: mvn failsafe:integration-test
             
           - name: Upload integration test reports
             if: always() 
@@ -42,3 +42,42 @@ jobs:
             with:
                 name: integration-test-reports
                 path: '**/target/failsafe-reports/*.xml'
+    create-release:
+        needs: build-and-test
+        runs-on: ubuntu-latest
+        steps:
+          - name: checkout code
+            uses: actions/checkout@v4
+            with:
+                ref: develop
+                
+          - name: Set up JDK 21
+            uses: actions/setup-java@v4
+            with:
+                java-version: '21'
+                distribution: 'adopt' 
+
+          - name: Compile
+            run: mvn clean package -DskipTests
+            
+          - name: Create GitHub release
+            id: create_release
+            uses: actions/create-release@v1
+            with:
+                tag_name: dev-pre-release
+                release_name: "Release ${{ github.sha}}"
+                body: "Automatically generated release from ${{ github.sha}}"
+                draft: false
+                prerelease: false
+            env:
+                GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                
+          - name: Upload JAR to GitHub releases
+            uses: actions/upload-release-asset@v1
+            with:
+                upload_url: ${{ steps.create_release.outputs.upload_url }}
+                asset_path: civilregistry-spring/target/civilregistry-spring-0.1.jar
+                asset_name: civilregistry-spring-0.1.jar
+                asset_content_type: application/java-archive
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

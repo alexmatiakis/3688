@@ -46,7 +46,7 @@ jobs:
             with:
                 name: integration-test-reports
                 path: '**/target/failsafe-reports/*.xml'
-        create-release:
+    create-release:
         needs: build-and-test
         runs-on: ubuntu-latest
         steps:

@@ -82,10 +82,11 @@ resource "aws_instance" "app" {
               #!/bin/bash
               sudo apt-get update -y
               sudo apt-get install -y openjdk-21-jdk git maven
-              git clone ${var.spring_boot_app_git_repo} /home/ubuntu/app/civilregistry-data
-              cd /home/ubuntu/app/civilregistry-data
+              git clone ${var.spring_boot_app_git_repo} /home/ubuntu/app
+              cd /home/ubuntu/app
               git fetch
               git checkout -b ${var.git_repo_branch} origin/${var.git_repo_branch}
+              cd civilregistry-data
               mvn clean package
               touch /tmp/user_data_complete
               EOF
